@@ -14,21 +14,20 @@
 
 FROM amazonlinux:2018.03
 
-RUN curl --silent --location https://rpm.nodesource.com/setup_8.x | bash - \
-    && yum install python36 python36-devel python36-pip python36-setuptools python36-virtualenv nodejs bzip2 fontconfig openssh-clients git -y \
-    && yum clean all \
+RUN yum install gcc python36 python36-devel python36-pip python36-setuptools python36-virtualenv bzip2 fontconfig openssh-clients git -y
+RUN curl https://www.sqlite.org/2019/sqlite-autoconf-3290000.tar.gz > sqlite.tar.gz
+RUN tar zxvf sqlite.tar.gz && cd sqlite-autoconf-3290000 && ./configure && make && make install
+
+RUN yum clean all \
     && rm -rf /var/cache/yum \
     && pip-3.6 install awscli --no-cache-dir \
     && cd /opt \
-    && npm install -g npm@latest \
-    && npm install phantomjs-prebuilt \
     && cd /usr/local/bin \
     && ln -s /usr/bin/pydoc3 pydoc \
     && ln -s /usr/bin/python3 python \
     && ln -s /usr/bin/python3-config python-config \
     && ln -s /usr/bin/pip-3.6 pip \
     && ln -s /usr/bin/virtualenv-3.6 virtualenv \
-    && ln -s /opt/node_modules/.bin/phantomjs phantomjs \
     && set -x && \
     # Install docker-compose
     # https://docs.docker.com/compose/install/
@@ -45,6 +44,7 @@ VOLUME /var/lib/docker
 COPY dockerd-entrypoint.sh /usr/local/bin/
 
 ENV PATH="/usr/local/bin:$PATH"
+ENV LD_LIBRARY_PATH="/usr/local/lib"
 
 ENV LANG="en_US.utf8"
 
