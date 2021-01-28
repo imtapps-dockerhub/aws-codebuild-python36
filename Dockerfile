@@ -39,6 +39,9 @@ RUN yum clean all \
     docker-compose version \
     && rm -rf /tmp/* /var/tmp/*
 
+RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.34.0/install.sh | bash
+RUN source ~/.nvm/nvm.sh && nvm install node
+
 VOLUME /var/lib/docker
 
 COPY dockerd-entrypoint.sh /usr/local/bin/
